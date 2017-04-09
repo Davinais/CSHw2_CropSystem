@@ -145,3 +145,21 @@ void cleanList(List* list)
         list->size = 0;
     }
 }
+
+void reverseList(List* list)
+{
+    if(list->head == NULL)
+        return;
+    Node* prev = NULL;
+    Node* current = list->head;
+    Node* next = list->head->next;
+    while(next != NULL)
+    {
+        current->next = prev;
+        prev = current;
+        current = next;
+        next = next->next;
+    }
+    current->next = prev;
+    list->head = current;
+}
