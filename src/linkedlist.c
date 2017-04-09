@@ -82,6 +82,7 @@ void insertNode(List* list, Node* node)
                 node->next = current;
             }
         }
+        list->size++;
     }
 }
 
@@ -90,12 +91,14 @@ void appendNode(List* list, Node* node)
     if(list->head == NULL)
     {
         list->head = node;
+        list->size++;
         return;
     }
     Node* current = list->head;
     while(current->next != NULL)
         current = current->next;
     current->next = node;
+    list->size++;
 }
 
 void deleteByID(List* list, int id)
@@ -121,6 +124,7 @@ void deleteByID(List* list, int id)
         }
         else
             printf("ID %d 並不存在於此列表中！", id);
+        list->size--;
     }
 }
 
@@ -138,5 +142,6 @@ void cleanList(List* list)
             current = current->next;
             free(prev);
         }
+        list->size = 0;
     }
 }
