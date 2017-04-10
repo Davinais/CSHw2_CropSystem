@@ -253,6 +253,7 @@ void printList(List* list)
     if(list->head == NULL)
     {
         char header[240];
+        printf("%s\n", strcenter(header, "════════════════════════════════════════", 40, 80));
         printf("%s", strcenter(header, "本列表為空列表！", 16, 80));
         return;
     }
@@ -261,6 +262,7 @@ void printList(List* list)
         char header[240];
         char bar[120];
         char title[5][30];
+        printf("%s\n", strcenter(header, "════════════════════════════════════════", 40, 80));
         sprintf(bar, "%s%s%s%s%s", strleft(title[0], "ID", 2, 4), strleft(title[1], "類別", 4, 8),
             strleft(title[2], "售價", 4, 8),strleft(title[3], "收成天數", 8, 12),strleft(title[4], "產量", 4, 8));
         printf("%s\n", strcenter(header, bar, 40, 80));
