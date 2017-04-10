@@ -35,6 +35,8 @@ void insertNode(List*, Node*);
 void appendNode(List*, Node*);
 void deleteByID(List*, int);
 void cleanList(List*);
+Node* getTail(List*);
 void reverseList(List*);
+void quickSort(List*);
 void printList(List*);
 #endif

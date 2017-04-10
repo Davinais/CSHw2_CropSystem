@@ -1,4 +1,5 @@
 #include "linkedlist.h"
+#include "stringutil.h"
 #include <stdio.h>
 
 bool searchID(List* list, int id)
@@ -17,9 +18,34 @@ bool isNoSmallerThan(int a, int b)
 {
     return (a>=b);
 }
+bool isLarger(int a, int b)
+{
+    return (a>b);
+}
 bool isNoLargerThan(int a, int b)
 {
     return (a<=b);
+}
+bool isSmaller(int a, int b)
+{
+    return (a<b);
+}
+
+int modeData(SortMode mode, Node* node)
+{
+    switch(mode)
+    {
+        case ID_M:
+            return node->id;
+        case TYPE_M:
+            return node->type;
+        case PRICE_M:
+            return node->price;
+        case DAY_M:
+            return node->day;
+        case YIELD_M:
+            return node->yield;
+    }
 }
 
 bool compareNode(SortMode mode, SortOrder order, Node* a, Node* b)
@@ -29,21 +55,7 @@ bool compareNode(SortMode mode, SortOrder order, Node* a, Node* b)
         compare = &isNoSmallerThan;
     else
         compare = &isNoLargerThan;
-    switch(mode)
-    {
-        case ID_M:
-            return compare(a->id, b->id);
-        case TYPE_M:
-            return compare(a->type, b->type);
-        case PRICE_M:
-            return compare(a->price, b->price);
-        case DAY_M:
-            return compare(a->day, b->day);
-        case YIELD_M:
-            return compare(a->yield, b->yield);
-        default:
-            return false;
-    }
+    return compare(modeData(mode, a), modeData(mode, b));
 }
 
 void insertNode(List* list, Node* node)
@@ -162,4 +174,103 @@ void reverseList(List* list)
     }
     current->next = prev;
     list->head = current;
+}
+
+Node* getTail(List* list)
+{
+    if(list->head == NULL)
+        return list->head;
+    Node* current = list->head;
+    while(current->next != NULL)
+        current = current->next;
+    return current;
+}
+
+Node* partition(Node* head, Node* end, Node **newHead, Node **newEnd, SortMode mode, bool (*compare)(int, int))
+{
+    Node* pivot = end;
+    Node *prev = NULL, *current = head, *tail = pivot;
+    while(current != pivot)
+    {
+        if(compare(modeData(mode, current), modeData(mode, pivot)))
+        {
+            if(prev != NULL)
+                prev->next = current->next;
+            //Node* temp = current->next;
+            tail->next = current; //將原本的最尾端加上目前的節點
+            tail = current; //將最尾端改為目前的節點
+            current = current->next; //current改為原目前的下一個節點
+            tail->next = NULL;
+        }
+        else
+        {
+            if((*newHead == NULL))
+                *newHead = current;
+            prev = current;
+            current = current->next;
+        }
+    }
+    if((*newHead == NULL))
+        (*newHead) = pivot;
+    (*newEnd) = tail;
+    return pivot;
+}
+
+Node* quickSortmain(Node* head, Node* end, SortMode mode, bool (*compare)(int, int))
+{
+    if(head == NULL || head == end)
+        return head;
+    Node *newHead = NULL, *newEnd = NULL;
+    Node* pivot = partition(head, end, &newHead, &newEnd, mode, *compare);
+    if(newHead != pivot)
+    {
+        Node* temp = newHead;
+        //切割左邊的表
+        while(temp->next != pivot)
+            temp = temp->next;
+        temp->next = NULL;
+        newHead = quickSortmain(newHead, temp, mode, *compare);
+        //接回去
+        temp = newHead;
+        while(temp->next != NULL)
+            temp = temp->next;
+        temp->next = pivot;
+    }
+    pivot->next = quickSortmain(pivot->next, newEnd, mode, *compare);
+    return newHead;
+}
+
+void quickSort(List* list)
+{
+    if(list->order == INCREASING)
+        list->head = quickSortmain(list->head, getTail(list), list->mode, &isLarger);
+    else
+        list->head = quickSortmain(list->head, getTail(list), list->mode, &isSmaller);
+}
+
+void printList(List* list)
+{
+    if(list->head == NULL)
+    {
+        char header[240];
+        printf("%s", strcenter(header, "本列表為空列表！", 16, 80));
+        return;
+    }
+    else
+    {
+        char header[240];
+        char bar[120];
+        char title[5][30];
+        sprintf(bar, "%s%s%s%s%s", strleft(title[0], "ID", 2, 4), strleft(title[1], "類別", 4, 8),
+            strleft(title[2], "售價", 4, 8),strleft(title[3], "收成天數", 8, 12),strleft(title[4], "產量", 4, 8));
+        printf("%s\n", strcenter(header, bar, 40, 80));
+        printf("%s\n", strcenter(header, "════════════════════════════════════════", 40, 80));
+        Node* current = list->head;
+        do
+        {
+            sprintf(bar, "%4d%8c%8d%12d%8d", current->id, current->type, current->price, current->day, current->yield);
+            printf("%s", strcenter(header, bar, 40, 80));
+            current = current->next;
+        }while(current != NULL);
+    }
 }
