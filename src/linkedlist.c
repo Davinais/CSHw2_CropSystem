@@ -248,6 +248,26 @@ void quickSort(List* list)
         list->head = quickSortmain(list->head, getTail(list), list->mode, &isSmaller);
 }
 
+void reassembleList(List* list, SortMode newmode, SortOrder neworder)
+{
+    if(list->mode == newmode)
+    {
+        if(list->order == neworder)
+            return;
+        else
+        {
+            list->order = neworder;
+            reverseList(list);
+        }
+    }
+    else
+    {
+        list->mode = newmode;
+        list->order = neworder;
+        quickSort(list);
+    }
+}
+
 void printList(List* list)
 {
     if(list->head == NULL)
@@ -263,8 +283,8 @@ void printList(List* list)
         char bar[120];
         char title[5][30];
         printf("%s\n", strcenter(header, "════════════════════════════════════════", 40, 80));
-        sprintf(bar, "%s%s%s%s%s", strleft(title[0], "ID", 2, 4), strleft(title[1], "類別", 4, 8),
-            strleft(title[2], "售價", 4, 8),strleft(title[3], "收成天數", 8, 12),strleft(title[4], "產量", 4, 8));
+        sprintf(bar, "%s%s%s%s%s", strright(title[0], "ID", 2, 4), strright(title[1], "類別", 4, 8),
+            strright(title[2], "售價", 4, 8),strright(title[3], "收成天數", 8, 12),strright(title[4], "產量", 4, 8));
         printf("%s\n", strcenter(header, bar, 40, 80));
         printf("%s\n", strcenter(header, "════════════════════════════════════════", 40, 80));
         Node* current = list->head;

@@ -38,5 +38,6 @@ void cleanList(List*);
 Node* getTail(List*);
 void reverseList(List*);
 void quickSort(List*);
+void reassembleList(List*, SortMode, SortOrder);
 void printList(List*);
 #endif
