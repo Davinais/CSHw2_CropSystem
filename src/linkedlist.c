@@ -155,6 +155,7 @@ void cleanList(List* list)
             free(prev);
         }
         list->size = 0;
+        list->head = NULL;
     }
 }
 
