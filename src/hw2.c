@@ -260,7 +260,7 @@ void deleteCrop(List* list)
                 do
                 {
                     printf("%*s%s", INDENT, "", "請輸入欲刪除的代號：");
-                    scanf("%d", &id); //使用 %1[^\n] 而非 %c 來避免讀到 \n 又只讀1個字元
+                    scanf("%d", &id);
                     if(flush_in() > 0) //flush函式回傳值為不包括\n或EOF字元的被清除字元數，若大於0即代表為不合法輸入
                         err = true;
                     else if(id < 1)
