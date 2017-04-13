@@ -296,6 +296,101 @@ void deleteCrop(List* list)
     }
 }
 
+void recommendCrop(List* list)
+{
+     while(true)
+    {
+        printHline();
+        printf("%*s%s\n", INDENT, "", "[A] 　輸入需求");
+        printf("%*s%s\n", INDENT, "", "[B] 　回到主選單");
+        char opt = askOption("請選擇功能[A-B]：", "AaBb");
+        switch(opt)
+        {
+            case 'A':
+            case 'a':
+                printHline();
+                bool err = false;
+                int day = 0;
+                char type = '\0';
+                printf("%*s%s\n", INDENT, "", "類型代號：");
+                printf("%*s%s\n", INDENT+2, "", "[F] 　水果");
+                printf("%*s%s\n", INDENT+2, "", "[B] 　花卉");
+                printf("%*s%s\n", INDENT+2, "", "[V] 　蔬菜");
+                do
+                {
+                    printf("%*s%s", INDENT, "", "請依[類型]-[天數]格輸入：");
+                    scanf("%1[FfBbVv]-%d", &type, &day); //使用 %1[^\n] 而非 %c 來避免讀到 \n 又只讀1個字元
+                    if(flush_in() > 0) //flush函式回傳值為不包括\n或EOF字元的被清除字元數，若大於0即代表為不合法輸入
+                        err = true;
+                    else if(day < 1)
+                        err = true;
+                    else if(type == '\0')
+                        err = true;
+                    else
+                        err = false;
+                    if(err)
+                    {
+                        char errbuf[TERM_LEN*2];
+                        sprintf(errbuf, "%*s%s", INDENT, "", "錯誤的輸入，請重新輸入！\n");
+                        printcolor(errbuf, RED);
+                    }
+                }while(err);
+                if(list->head == NULL)
+                {
+                    char printbuf[TERM_LEN*2];
+                    sprintf(printbuf, "%*s%s", INDENT, "", "列表為空，無法推薦作物！\n");
+                    printcolor(printbuf, RED);
+                }
+                else
+                {
+                    Node *current = list->head;
+                    Node *recommend = NULL;
+                    int recommendTotal = 0, currentTotal = 0;
+                    while(current != NULL)
+                    {
+                        if(current->type == type)
+                        {
+                            currentTotal = current->yield*(day/current->day)*current->price;
+                            if(currentTotal > 0)
+                            {
+                                if(recommend == NULL)
+                                {
+                                    recommend = current;
+                                    recommendTotal = currentTotal;
+                                }
+                                else if(currentTotal > recommendTotal)
+                                {
+                                    recommend = current;
+                                    recommendTotal = currentTotal;
+                                }
+                            }
+                        }
+                        current = current->next;
+                    }
+                    if(recommend == NULL)
+                    {
+                        char printbuf[TERM_LEN*2];
+                        sprintf(printbuf, "%*s%s", INDENT, "", "列表中不存在符合條件的作物！\n");
+                        printcolor(printbuf, GREEN);
+                    }
+                    else
+                    {
+                        //以下偷懶，直接複製推薦作物的Node，建立一個只有一個元素的list，用printList印出來
+                        Node tempRecommend = *recommend;
+                        tempRecommend.next = NULL;
+                        List temp = {1, ID_M, INCREASING, &tempRecommend};
+                        printList(&temp);
+                    }
+                }
+                break;
+            case 'B':
+            case 'b':
+            default:
+                return;
+        }
+    }
+}
+
 int main()
 {
     List croplist = {0, ID_M, INCREASING, NULL};
@@ -324,9 +419,12 @@ int main()
                 printcolor(printbuf, GREEN);
                 break;
             case '5':
+                recommendCrop(&croplist);
                 break;
             case '6':
             default:
+                sprintf(printbuf, "%*s%s", INDENT, "", "感謝使用本系統！\n");
+                printcolor(printbuf, GREEN);
                 return 0;
         }
     }
