@@ -3,6 +3,7 @@
 #include "termctrl.h"
 #include "stringutil.h"
 #include "linkedlist.h"
+#include "simplecropcsv.h"
 #define TERM_LEN 80
 #define HLINE_LEN 40
 
@@ -230,6 +231,7 @@ void addCrop(List* list)
                         crop->price = price;
                         crop->day = day;
                         crop->yield = yield;
+                        crop->next = NULL;
                     }
                     insertNode(list, crop);
                     break;
@@ -401,7 +403,7 @@ int main()
         printHline();
         printMenu();
         printHline();
-        char func = askOption("請選擇功能[1-6]：", "123456");
+        char func = askOption("請選擇功能[1-7]：", "1234567");
         switch(func)
         {
             case '1':
@@ -420,6 +422,9 @@ int main()
                 break;
             case '5':
                 recommendCrop(&croplist);
+                break;
+            case '7':
+                readCSV("input.csv", &croplist);
                 break;
             case '6':
             default:
