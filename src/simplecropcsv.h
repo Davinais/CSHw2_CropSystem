@@ -4,4 +4,5 @@
 #include "linkedlist.h"
 
 void readCSV(char*, List*);
+void writeCSV(char*, List*);
 #endif

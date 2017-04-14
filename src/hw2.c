@@ -25,6 +25,8 @@ void printMenu()
     printf("%s", strcenter(printbuf, "[4] 　清空作物清單", 18, TERM_LEN));
     printf("%s", strcenter(printbuf, "[5] 　作物推薦　　", 18, TERM_LEN));
     printf("%s", strcenter(printbuf, "[6] 　結束管理系統", 18, TERM_LEN));
+    printf("%s", strcenter(printbuf, "[7] 　讀取外部清單", 18, TERM_LEN));
+    printf("%s", strcenter(printbuf, "[8] 　儲存作物清單", 18, TERM_LEN));
 }
 
 char askOption(char* question, char* valid)
@@ -403,7 +405,7 @@ int main()
         printHline();
         printMenu();
         printHline();
-        char func = askOption("請選擇功能[1-7]：", "1234567");
+        char func = askOption("請選擇功能[1-8]：", "12345678");
         switch(func)
         {
             case '1':
@@ -424,7 +426,18 @@ int main()
                 recommendCrop(&croplist);
                 break;
             case '7':
-                readCSV("input.csv", &croplist);
+                printHline();
+                printf("%*s請輸入檔案名稱：", INDENT, "");
+                scanf("%s", printbuf);
+                flush_in();
+                readCSV(printbuf, &croplist);
+                break;
+            case '8':
+                printHline();
+                printf("%*s請輸入檔案名稱：", INDENT, "");
+                scanf("%s", printbuf);
+                flush_in();
+                writeCSV(printbuf, &croplist);
                 break;
             case '6':
             default:

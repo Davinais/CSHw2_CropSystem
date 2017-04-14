@@ -275,7 +275,7 @@ void printList(List* list)
     {
         char header[240];
         printf("%s\n", strcenter(header, "════════════════════════════════════════", 40, 80));
-        printf("%s", strcenter(header, "本列表為空列表！", 16, 80));
+        printf("%s\n", strcenter(header, "本列表為空列表！", 16, 80));
         return;
     }
     else

@@ -16,7 +16,7 @@ void readCSV(char* filename, List* list)
     if(csvin == NULL)
     {
         char printbuf[240];
-        sprintf(printbuf, "%*s%s", INDENT, "", "讀取失敗，請確認檔案是否存在。");
+        sprintf(printbuf, "%*s%s", INDENT, "", "讀取失敗，請確認檔案是否存在。\n");
         printcolor(printbuf, RED);
         return;
     }
@@ -47,10 +47,12 @@ void readCSV(char* filename, List* list)
     }
     if(check)
     {
+        int line = 1;
         cleanList(list);
         char *crop[5];
         while(fgets(buffer, 120, csvin) != NULL)
         {
+            line++;
             size_t len = strlen(buffer);
             if (len > 0 && buffer[len-1] == '\n')
                 buffer[--len] = '\0';
@@ -68,19 +70,19 @@ void readCSV(char* filename, List* list)
             if(searchID(list, id))
             {
                 char errbuf[160];
-                sprintf(errbuf, "%*sID代碼重複：[%d]，忽略此ID！\n", INDENT, "", id);
+                sprintf(errbuf, "%*s[第%d行]ID代碼重複，忽略此行！\n", INDENT, "", line);
                 printcolor(errbuf, RED);
             }
             else if(!strchr("BbFfVv", typeCh[0]) || strlen(crop[1]) != 1)
             {
                 char errbuf[160];
-                sprintf(errbuf, "%*s類型錯誤：[%d]，忽略此ID！\n", INDENT, "", id);
+                sprintf(errbuf, "%*s[第%d行]類型錯誤，忽略此行！\n", INDENT, "", line);
                 printcolor(errbuf, RED);
             }
             else if(id < 1 || price < 1 || day < 1 || yield < 1)
             {
                 char errbuf[160];
-                sprintf(errbuf, "%*s代碼、售價、收成天數及產量皆需為正整數：[%d]，忽略此ID！\n", INDENT, "", id);
+                sprintf(errbuf, "%*s[第%d行]代碼、售價、收成天數及產量皆需為正整數，忽略此行！\n", INDENT, "", line);
                 printcolor(errbuf, RED);
             }
             else
@@ -88,7 +90,7 @@ void readCSV(char* filename, List* list)
                 Node *cropNode = (Node*)malloc(sizeof(Node));
                 if(cropNode == NULL)
                 {
-                    printcolor("記憶體不足，離開程式。", RED);
+                    printcolor("記憶體不足，離開程式。\n", RED);
                     exit(1);
                 }
                 else
@@ -114,4 +116,30 @@ void readCSV(char* filename, List* list)
         printcolor(errbuf, RED);
     }
     fclose(csvin);
+}
+
+void writeCSV(char* filename, List* list)
+{
+    char *dataname[] = {"ID", "TYPE", "PRICE", "DAY", "YIELD"};
+    FILE *csvout;
+
+    csvout = fopen(filename, "w");
+    if(csvout == NULL)
+    {
+        char printbuf[240];
+        sprintf(printbuf, "%*s%s", INDENT, "", "存檔失敗，無法存取該目錄或者無法存取檔案。\n");
+        printcolor(printbuf, RED);
+        return;
+    }
+    fprintf(csvout, "%s,%s,%s,%s,%s\n", dataname[0], dataname[1], dataname[2], dataname[3], dataname[4]);
+    Node* current = list->head;
+    while(current != NULL)
+    {
+        fprintf(csvout, "%d,%c,%d,%d,%d\n", current->id, toupper(current->type), current->price, current->day, current->yield);
+        current = current->next;
+    }
+    char buf[160];
+    sprintf(buf, "%*s檔案儲存成功！\n", INDENT, "");
+    printcolor(buf, GREEN);
+    fclose(csvout);
 }
