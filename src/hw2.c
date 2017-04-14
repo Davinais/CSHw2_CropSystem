@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "termctrl.h"
 #include "stringutil.h"
 #include "linkedlist.h"
@@ -349,10 +350,12 @@ void recommendCrop(List* list)
                 {
                     Node *current = list->head;
                     Node *recommend = NULL;
+                    //建立一個recommendList，如此一來若推薦作物有多個，便可以一起印出
+                    List recommendList = {0, ID_M, INCREASING, NULL};
                     int recommendTotal = 0, currentTotal = 0;
                     while(current != NULL)
                     {
-                        if(current->type == type)
+                        if(current->type == toupper(type))
                         {
                             currentTotal = current->yield*(day/current->day)*current->price;
                             if(currentTotal > 0)
@@ -361,11 +364,27 @@ void recommendCrop(List* list)
                                 {
                                     recommend = current;
                                     recommendTotal = currentTotal;
+                                    Node *temp = (Node*)malloc(sizeof(Node));
+                                    *temp = *recommend;
+                                    temp->next = NULL;
+                                    appendNode(&recommendList, temp);
                                 }
                                 else if(currentTotal > recommendTotal)
                                 {
                                     recommend = current;
                                     recommendTotal = currentTotal;
+                                    cleanList(&recommendList); //若是比之前的大，就清空之前的推薦清單重新開始
+                                    Node *temp = (Node*)malloc(sizeof(Node));
+                                    *temp = *recommend;
+                                    temp->next = NULL;
+                                    appendNode(&recommendList, temp);
+                                }
+                                else if(currentTotal == recommendTotal)
+                                {
+                                    Node *temp = (Node*)malloc(sizeof(Node));
+                                    *temp = *current;
+                                    temp->next = NULL;
+                                    appendNode(&recommendList, temp);
                                 }
                             }
                         }
@@ -379,11 +398,9 @@ void recommendCrop(List* list)
                     }
                     else
                     {
-                        //以下偷懶，直接複製推薦作物的Node，建立一個只有一個元素的list，用printList印出來
-                        Node tempRecommend = *recommend;
-                        tempRecommend.next = NULL;
-                        List temp = {1, ID_M, INCREASING, &tempRecommend};
-                        printList(&temp);
+                        //印出recommendList，之後清空清單以還回malloc出來的空間
+                        printList(&recommendList);
+                        cleanList(&recommendList);
                     }
                 }
                 break;
