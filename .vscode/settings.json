@@ -5,5 +5,9 @@
         "typeinfo": "cpp",
         "functional": "cpp",
         "locale": "cpp"
+    },
+    "files.exclude": {
+        "**/*.o": true,
+        "**/*.d": true
     }
 }

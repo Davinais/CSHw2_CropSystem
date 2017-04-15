@@ -1,4 +1,4 @@
-CC = gcc
+CC = clang
 INCLUDE = .
 LINKER = $(CC) -o
 
@@ -6,19 +6,17 @@ CFLAGS = -Wall -Wextra -Wno-unused-result -std=c11
 
 SOURCES := $(wildcard *.c)
 OBJECTS := $(SOURCES:%.c=%.o)
+DEPS := $(OBJECTS:%.o=%.d)
 TARGET := hw2
 
 $(TARGET): $(OBJECTS)
 	$(LINKER) $(TARGET) $(OBJECTS)
-hw2.o: hw2.c termctrl.h stringutil.h linkedlist.h simplecropcsv.h
+
+-include $(DEPS)
+
+%.o: %.c
+	@$(CC) -MM $< > $*.d
 	$(CC) -I$(INCLUDE) $(CFLAGS) -c $<
-termctrl.o: termctrl.c termctrl.h
-	$(CC) -I$(INCLUDE) $(CFLAGS) -c $<
-stringutil.o: stringutil.c stringutil.h
-	$(CC) -I$(INCLUDE) $(CFLAGS) -c $<
-linkedlist.o: linkedlist.c linkedlist.h stringutil.h
-	$(CC) -I$(INCLUDE) $(CFLAGS) -c $<
-simplecropcsv.o: simplecropcsv.c simplecropcsv.h termctrl.h linkedlist.h
-	$(CC) -I$(INCLUDE) $(CFLAGS) -c $<
+
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -f $(OBJECTS) $(DEPS) $(TARGET)
