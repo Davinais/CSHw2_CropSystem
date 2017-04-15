@@ -365,6 +365,11 @@ void recommendCrop(List* list)
                                     recommend = current;
                                     recommendTotal = currentTotal;
                                     Node *temp = (Node*)malloc(sizeof(Node));
+                                    if(temp == NULL)
+                                    {
+                                        printcolor("記憶體不足，離開程式。\n", RED);
+                                        exit(1);
+                                    }
                                     *temp = *recommend;
                                     temp->next = NULL;
                                     appendNode(&recommendList, temp);
@@ -375,6 +380,11 @@ void recommendCrop(List* list)
                                     recommendTotal = currentTotal;
                                     cleanList(&recommendList); //若是比之前的大，就清空之前的推薦清單重新開始
                                     Node *temp = (Node*)malloc(sizeof(Node));
+                                    if(temp == NULL)
+                                    {
+                                        printcolor("記憶體不足，離開程式。\n", RED);
+                                        exit(1);
+                                    }
                                     *temp = *recommend;
                                     temp->next = NULL;
                                     appendNode(&recommendList, temp);
@@ -382,6 +392,11 @@ void recommendCrop(List* list)
                                 else if(currentTotal == recommendTotal)
                                 {
                                     Node *temp = (Node*)malloc(sizeof(Node));
+                                    if(temp == NULL)
+                                    {
+                                        printcolor("記憶體不足，離開程式。\n", RED);
+                                        exit(1);
+                                    }
                                     *temp = *current;
                                     temp->next = NULL;
                                     appendNode(&recommendList, temp);
