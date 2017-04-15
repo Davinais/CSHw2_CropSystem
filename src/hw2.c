@@ -189,7 +189,7 @@ void addCrop(List* list)
                     {
                         printf("%*s%s\n", INDENT, "", "格式：[代碼]-[類型]-[售價]-[收成天數]-[產量]");
                         printf("%*s%s", INDENT, "", "請依格式輸入新作物：");
-                        scanf("%d-%1[FfBbVv]-%d-%d-%d", &id, &type, &price, &day, &yield);
+                        scanf("%d-%1[FfBbVv]-%d-%d-%d", &id, &type, &price, &day, &yield); //以%1[FfBbVv]限制只能讀取這些字元，並且長度最大為1的字串
                         if(flush_in() > 0)
                         {
                             err = true;
@@ -204,6 +204,7 @@ void addCrop(List* list)
                             sprintf(errbuf, "%*s%s", INDENT, "", "代碼、售價、收成天數及產量皆需為正整數！\n");
                             printcolor(errbuf, RED);
                         }
+                        //嚴格來說這個if大概是不會走到，因為會在前面的flush_in()就會>0，導致進入該區塊
                         else if(type == '\0')
                         {
                             err = true;
@@ -414,6 +415,9 @@ void recommendCrop(List* list)
                     else
                     {
                         //印出recommendList，之後清空清單以還回malloc出來的空間
+                        char printbuf[TERM_LEN*2];
+                        sprintf(printbuf, "%*s%s", INDENT, "", "以下是推薦種植的作物：\n");
+                        printcolor(printbuf, GREEN);
                         printList(&recommendList);
                         cleanList(&recommendList);
                     }

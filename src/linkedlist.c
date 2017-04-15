@@ -205,13 +205,15 @@ Node* partition(Node* head, Node* end, Node **newHead, Node **newEnd, SortMode m
         }
         else
         {
-            if((*newHead == NULL))
+            //若還不存在newHead，則指定目前指到的為newHead
+            if(*newHead == NULL)
                 *newHead = current;
             prev = current;
             current = current->next;
         }
     }
-    if((*newHead == NULL))
+    //若是經過一連串比較，newHead還是為空，則代表pivot是目前排序中最前面的那個
+    if(*newHead == NULL)
         (*newHead) = pivot;
     (*newEnd) = tail;
     return pivot;

@@ -1,3 +1,4 @@
+#define _GNU_SOURCE 1
 #include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -9,10 +10,11 @@
 
 void readCSV(char* filename, List* list)
 {
-    char *dataname[] = {"ID", "TYPE", "PRICE", "DAY", "YIELD"};
+    char *dataname[] = {"ID", "TYPE", "PRICE", "DAY", "YIELD"}; //欄位名稱
     FILE *csvin;
 
     csvin = fopen(filename, "r");
+    //確認檔案是否有開啟
     if(csvin == NULL)
     {
         char printbuf[240];
@@ -23,13 +25,15 @@ void readCSV(char* filename, List* list)
     char buffer[120];
     char* data;
     bool check = true;
+    //檢查第一行是否符合欄位名稱順序
     if(fgets(buffer, 120, csvin) != NULL)
     {
+        //去除行尾的\n
         size_t len = strlen(buffer);
         if (len > 0 && buffer[len-1] == '\n')
             buffer[--len] = '\0';
         int i = 0;
-        char *s = strdup(buffer);
+        char *s = buffer;
         for(data = strsep(&s, ","); data != NULL; data=strsep(&s, ","))
         {
             if(i >= 5)
@@ -50,22 +54,26 @@ void readCSV(char* filename, List* list)
         int line = 1;
         cleanList(list);
         char *crop[5];
+        //每次讀取一行資料
         while(fgets(buffer, 120, csvin) != NULL)
         {
             line++;
+            //去除行尾的\n
             size_t len = strlen(buffer);
             if (len > 0 && buffer[len-1] == '\n')
                 buffer[--len] = '\0';
             int i = 0;
-            char *s = strdup(buffer);
+            char *s = buffer;
+            //以逗號分隔字串
             for(data = strsep(&s, ","); data != NULL; data=strsep(&s, ","))
             {
                 crop[i] = data;
                 i++;
             }
+            //將各個資料轉成相應的類型並檢查是否有效
             int id = atoi(crop[0]);
             char typeCh[1];
-            strncpy(typeCh, crop[1], 1);
+            strncpy(typeCh, crop[1], 1); //char*字串常數 -> char字元
             int price = atoi(crop[2]), day = atoi(crop[3]), yield = atoi(crop[4]);
             if(searchID(list, id))
             {
@@ -120,10 +128,11 @@ void readCSV(char* filename, List* list)
 
 void writeCSV(char* filename, List* list)
 {
-    char *dataname[] = {"ID", "TYPE", "PRICE", "DAY", "YIELD"};
+    char *dataname[] = {"ID", "TYPE", "PRICE", "DAY", "YIELD"};//欄位名稱
     FILE *csvout;
 
     csvout = fopen(filename, "w");
+    //檢查能否成功建立或存取檔案
     if(csvout == NULL)
     {
         char printbuf[240];
@@ -131,8 +140,10 @@ void writeCSV(char* filename, List* list)
         printcolor(printbuf, RED);
         return;
     }
+    //輸出欄位名稱
     fprintf(csvout, "%s,%s,%s,%s,%s\n", dataname[0], dataname[1], dataname[2], dataname[3], dataname[4]);
     Node* current = list->head;
+    //輸出每行資料
     while(current != NULL)
     {
         fprintf(csvout, "%d,%c,%d,%d,%d\n", current->id, toupper(current->type), current->price, current->day, current->yield);
