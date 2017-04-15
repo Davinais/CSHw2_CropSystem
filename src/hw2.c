@@ -104,8 +104,9 @@ void showList(List* list)
                         printcolor(errbuf, RED);
                     }
                 }while(err);
-                SortMode mode;
-                SortOrder order;
+                //給初始值，讓開-O2時編譯器會開心
+                SortMode mode = ID_M;
+                SortOrder order = INCREASING;
                 printf("%*s%s", INDENT, "", "您選擇了依 ");
                 switch(modec)
                 {

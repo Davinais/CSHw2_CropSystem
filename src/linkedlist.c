@@ -46,6 +46,7 @@ int modeData(SortMode mode, Node* node)
         case YIELD_M:
             return node->yield;
     }
+    return -1; //給-1為無效值，為了讓編譯器開心
 }
 
 bool compareNode(SortMode mode, SortOrder order, Node* a, Node* b)
